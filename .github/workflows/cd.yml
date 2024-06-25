@@ -31,7 +31,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: runner test
+      - name: packing application
         run: mvn -B package --file pom.xml
 
   test:
@@ -46,7 +46,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: package application
+      - name: runner test application
         run: |
           mvn clean install
           mvn verify
@@ -63,10 +63,8 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Registry Application
-        run: |
-          mvn clean install
-          mvn package
+      - name: Docker Registry Application
+        run: mvn mvn -B package --file pom.xml
 
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
