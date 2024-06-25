@@ -5,13 +5,13 @@ services:
   db:
     image: postgres:15
     restart: always
-    container_name: poi
+    container_name: poi_db
     ports:
       - "5432:5432"
     networks:
       - msnetwork
     environment:
-      - POSTGRES_DB=poidb
+      - POSTGRES_DB=poi_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=12345
 
