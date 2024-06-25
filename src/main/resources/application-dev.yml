@@ -1,0 +1,17 @@
+# Database Configuration
+spring:
+  h2:
+    console:
+      enabled: true
+
+  datasource:
+    username: sa
+    password: sa
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+
+# Server Port Configuration
+server:
+  port: 8080
