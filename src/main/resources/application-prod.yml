@@ -9,9 +9,9 @@ spring:
 
 # Database Configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/poidb
+    url: jdbc:postgresql://localhost:5432/poi_db
     username: postgres
-    password: root
+    password: 12345
 
 # Hibernate Configuration
   jpa:

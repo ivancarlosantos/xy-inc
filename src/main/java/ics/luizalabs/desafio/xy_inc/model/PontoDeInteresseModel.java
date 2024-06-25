@@ -19,11 +19,11 @@ public class PontoDeInteresseModel implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nomePoi;
+    private String localPoi;
 
-    private Integer coordX;
+    private Double coordX;
 
-    private Integer coordY;
+    private Double coordY;
 
-    private LocalDateTime createAt;
+    private LocalDateTime criadoEm;
 }

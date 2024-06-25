@@ -2,6 +2,8 @@ package ics.luizalabs.desafio.xy_inc.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -9,9 +11,9 @@ import lombok.*;
 @Builder
 public class PontoDeInteresseDTO {
 
-    private String nomePoi;
+    private String localPoi;
 
-    private Integer coordX;
+    private Double coordX;
 
-    private Integer coordY;
+    private Double coordY;
 }
