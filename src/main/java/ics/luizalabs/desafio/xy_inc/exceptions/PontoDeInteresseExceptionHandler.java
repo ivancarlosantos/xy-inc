@@ -23,7 +23,7 @@ public class PontoDeInteresseExceptionHandler {
         return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = {BusinessException.class})
+    @ExceptionHandler(value = {RegraDeNegocioException.class})
     public ResponseEntity<ExceptionMessage> handlerExceptionBadRequest(RuntimeException ex) {
 
         ExceptionMessage message = new ExceptionMessage(
