@@ -1,7 +1,7 @@
 package ics.luizalabs.desafio.xy_inc.service;
 
 import ics.luizalabs.desafio.xy_inc.dto.PontoDeInteresseDTO;
-import ics.luizalabs.desafio.xy_inc.exceptions.BusinessException;
+import ics.luizalabs.desafio.xy_inc.exceptions.RegraDeNegocioException;
 import ics.luizalabs.desafio.xy_inc.exceptions.LocalNaoEncontradoException;
 import ics.luizalabs.desafio.xy_inc.model.PontoDeInteresseModel;
 import ics.luizalabs.desafio.xy_inc.repository.PontoDeInteresseRepository;
@@ -33,7 +33,7 @@ public class PontoDeInteresseService {
                 .build();
 
         if (dto.getCoordX() < 0 || dto.getCoordY() < 0) {
-            throw new BusinessException("COORDENADAS NÃO PODEM SER VALORES NEGATIVOS");
+            throw new RegraDeNegocioException("COORDENADAS NÃO PODEM SER VALORES NEGATIVOS");
         }
 
         repository.save(poi);
@@ -49,7 +49,7 @@ public class PontoDeInteresseService {
                 .toList();
     }
 
-    public PontoDeInteresseDTO foundLocalPOI(String local) {
+    public PontoDeInteresseDTO findLocalPOI(String local) {
 
         Optional<PontoDeInteresseDTO> pdi = Optional
                 .ofNullable(repository
