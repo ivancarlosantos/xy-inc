@@ -18,7 +18,7 @@ jobs:
           cache: 'maven'
 
       - name: Build with Maven
-        run: mvn clean install
+        run: mvn clean install -DskipTests
 
   package:
     needs: [ build ]
@@ -48,7 +48,7 @@ jobs:
           cache: 'maven'
 
       - name: Test Application App
-        run: mvn clean test
+        run: mvn test
 
   deploy:
     needs: [ test ]
