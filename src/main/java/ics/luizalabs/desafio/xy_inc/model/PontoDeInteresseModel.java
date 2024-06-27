@@ -2,6 +2,7 @@ package ics.luizalabs.desafio.xy_inc.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -25,5 +26,6 @@ public class PontoDeInteresseModel implements Serializable {
 
     private Double coordY;
 
+    @CreationTimestamp
     private LocalDateTime criadoEm;
 }

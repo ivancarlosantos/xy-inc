@@ -1,19 +1,14 @@
 package ics.luizalabs.desafio.xy_inc.dto;
 
-import lombok.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
-
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class PontoDeInteresseDTO {
-
-    private String localPoi;
-
-    private Double coordX;
-
-    private Double coordY;
-}
+public record PontoDeInteresseDTO(
+        @NotEmpty
+        @NotBlank
+        String localPoi,
+        @NotNull
+        Double coordX,
+        @NotNull
+        Double coordY) {}
