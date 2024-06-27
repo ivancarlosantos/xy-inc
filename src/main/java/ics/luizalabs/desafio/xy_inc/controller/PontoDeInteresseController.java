@@ -31,7 +31,7 @@ public class PontoDeInteresseController {
         return ResponseEntity.status(HttpStatus.OK).body(service.list());
     }
 
-    @GetMapping(path = "/find")
+    @GetMapping(path = "/find-local")
     public ResponseEntity<PontoDeInteresseDTO> foundLocalPOI(@RequestParam(value = "local") String local) {
         return ResponseEntity.status(HttpStatus.OK).body(service.findLocalPOI(local));
     }

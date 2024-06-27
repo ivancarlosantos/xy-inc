@@ -142,7 +142,7 @@ class PontoDeInteresseServiceTest {
     }
 
     @Test
-    @DisplayName("Retorna uma Lista de Pontos de Interesse em relação a Distância Fornecida")
+    @DisplayName("Retorna uma Lista de Locais de Pontos de Interesse em relação a Distância Fornecida")
     void testSearchPOI() {
         //Arrange
         List<PontoDeInteresseModel> models = List.of(
