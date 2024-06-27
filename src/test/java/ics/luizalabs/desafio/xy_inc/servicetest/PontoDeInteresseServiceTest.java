@@ -65,6 +65,80 @@ class PontoDeInteresseServiceTest {
     }
 
     @Test
+    @DisplayName("Atualiza o Registro De Um Ponto De Interesse")
+    public void testUpdate() {
+
+        Long id = 1L;
+        PontoDeInteresseDTO dto = new PontoDeInteresseDTO("Lanchonete", 10.0, 20.0);
+
+        PontoDeInteresseModel model = PontoDeInteresseModel.builder()
+                .localPoi(dto.localPoi())
+                .coordX(dto.coordX())
+                .coordY(dto.coordY())
+                .build();
+
+        when(repository.findById(id)).thenReturn(Optional.of(model));
+        when(repository.save(any(PontoDeInteresseModel.class))).thenReturn(model);
+
+        PontoDeInteresseDTO result = service.updatePOI(id, dto);
+
+        assertEquals(dto.localPoi(), result.localPoi());
+        assertEquals(dto.coordX(), result.coordX());
+        assertEquals(dto.coordY(), result.coordY());
+
+        verify(repository, times(1)).save(any(PontoDeInteresseModel.class));
+
+        verifyNoMoreInteractions(repository);
+    }
+
+    @Test
+    @DisplayName("Retorna Uma Exceção Em Caso do Campo Local Esteja Vazio Ou Nulo")
+    public void testUpdateLocalEmptyOrNull() {
+
+        Long id = 1L;
+        PontoDeInteresseDTO dto = new PontoDeInteresseDTO("", 10.0, 20.0);
+
+        PontoDeInteresseModel model = PontoDeInteresseModel.builder()
+                .localPoi(dto.localPoi())
+                .coordX(dto.coordX())
+                .coordY(dto.coordY())
+                .build();
+
+        when(repository.findById(id)).thenReturn(Optional.of(model));
+
+        Exception exception = assertThrows(RegraDeNegocioException.class, () -> {
+            service.updatePOI(id, dto);
+        });
+
+        assertEquals("O CAMPO LOCAL NÃO PODE ESTAR VAZIO E/OU NULO", exception.getMessage());
+
+        verifyNoMoreInteractions(repository);
+    }
+
+    @Test
+    @DisplayName("Retorna Exceção Em Caso de Tentativa De Atualização com Coordenadas Negativas")
+    public void testUpdateNegativeCoordinatesException() {
+        Long id = 1L;
+        PontoDeInteresseDTO dto = new PontoDeInteresseDTO("Lanchonete", -10.0, -20.0);
+
+        PontoDeInteresseModel model = PontoDeInteresseModel.builder()
+                .localPoi(dto.localPoi())
+                .coordX(dto.coordX())
+                .coordY(dto.coordY())
+                .build();
+
+        when(repository.findById(id)).thenReturn(Optional.of(model));
+
+        Exception exception = assertThrows(RegraDeNegocioException.class, () -> {
+            service.updatePOI(id, dto);
+        });
+
+        assertEquals("COORDENADAS NÃO PODEM SER VALORES NEGATIVOS", exception.getMessage());
+
+        verifyNoMoreInteractions(repository);
+    }
+
+    @Test
     @DisplayName("Retorna Exceção Em Caso De Local Não Encontrado")
     void testFindLocalPOINotFound() {
         when(repository.findByLocalPOI("Lanchonete")).thenReturn(Optional.empty());
