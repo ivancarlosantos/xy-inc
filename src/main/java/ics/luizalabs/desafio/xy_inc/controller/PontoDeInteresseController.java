@@ -1,7 +1,7 @@
 package ics.luizalabs.desafio.xy_inc.controller;
 
-import ics.luizalabs.desafio.xy_inc.dto.RequestTest;
 import ics.luizalabs.desafio.xy_inc.dto.PontoDeInteresseDTO;
+import ics.luizalabs.desafio.xy_inc.dto.RequestTest;
 import ics.luizalabs.desafio.xy_inc.service.PontoDeInteresseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

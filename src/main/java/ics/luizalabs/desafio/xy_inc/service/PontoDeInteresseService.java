@@ -6,11 +6,8 @@ import ics.luizalabs.desafio.xy_inc.exceptions.LocalNaoEncontradoException;
 import ics.luizalabs.desafio.xy_inc.model.PontoDeInteresseModel;
 import ics.luizalabs.desafio.xy_inc.repository.PontoDeInteresseRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,34 +15,31 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PontoDeInteresseService {
 
-    private final ModelMapper mapper;
-
     private final PontoDeInteresseRepository repository;
 
     public PontoDeInteresseDTO persist(PontoDeInteresseDTO dto) {
 
         PontoDeInteresseModel poi = PontoDeInteresseModel
                 .builder()
-                .localPoi(dto.getLocalPoi())
-                .coordX(dto.getCoordX())
-                .coordY(dto.getCoordY())
-                .criadoEm(LocalDateTime.now())
+                .localPoi(dto.localPoi())
+                .coordX(dto.coordX())
+                .coordY(dto.coordY())
                 .build();
 
-        if (dto.getCoordX() < 0 || dto.getCoordY() < 0) {
+        if (dto.coordX() < 0 || dto.coordY() < 0) {
             throw new RegraDeNegocioException("COORDENADAS NÃO PODEM SER VALORES NEGATIVOS");
         }
 
         repository.save(poi);
 
-        return mapper.map(poi, PontoDeInteresseDTO.class);
+        return new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY());
     }
 
     public List<PontoDeInteresseDTO> list() {
         return repository
-                .findAll(Sort.by("localPoi"))
+                .findAll()
                 .stream()
-                .map(poi -> mapper.map(poi, PontoDeInteresseDTO.class))
+                .map(poi -> new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
                 .toList();
     }
 
@@ -54,7 +48,7 @@ public class PontoDeInteresseService {
         Optional<PontoDeInteresseDTO> pdi = Optional
                 .ofNullable(repository
                         .findByLocalPOI(local)
-                        .map(poi -> mapper.map(poi, PontoDeInteresseDTO.class))
+                        .map(poi -> new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
                         .orElseThrow(() -> new LocalNaoEncontradoException("LOCAL NÃO ENCONTRADO")))
                 .stream()
                 .findFirst();
@@ -72,14 +66,14 @@ public class PontoDeInteresseService {
         return repository.findLocalRef(xMin, xMax, yMin, yMax)
                 .stream()
                 .filter(p -> searchByCoordinate(x, y, p.getCoordX(), p.getCoordY()) <= max)
-                .map(poi -> mapper.map(poi, PontoDeInteresseDTO.class))
+                .map(poi -> new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
                 .toList();
     }
 
     private Double searchByCoordinate(Double coordX,
-                                       Double coordY,
-                                       Double refX,
-                                       Double refY) {
+                                      Double coordY,
+                                      Double refX,
+                                      Double refY) {
 
         return calcRange(coordX, coordY, refX, refY);
     }
