@@ -24,8 +24,10 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -62,6 +64,23 @@ public class PontoDeInteresseControllerTest {
                         .characterEncoding("UTF-8")
                         .content(request))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("Client Atualiza Um Ponto De Interesse")
+    void testUpdate() throws Exception {
+        Long id = 1L;
+        PontoDeInteresseDTO dto = new PontoDeInteresseDTO("Lanchonete", 10.0, 20.0);
+        when(service.updatePOI(id, dto)).thenReturn(dto);
+
+        String response = mapper.writeValueAsString(dto);
+
+        mockMvc.perform(put("/poi/update/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .content(response))
+                .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
 
