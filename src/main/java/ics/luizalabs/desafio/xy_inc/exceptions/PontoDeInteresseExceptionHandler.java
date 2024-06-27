@@ -2,7 +2,6 @@ package ics.luizalabs.desafio.xy_inc.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -38,18 +37,6 @@ public class PontoDeInteresseExceptionHandler {
 
     @ExceptionHandler(value = {MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ExceptionMessage> handlerExceptionFormatNumber(MethodArgumentTypeMismatchException ex) {
-
-        ExceptionMessage message = new ExceptionMessage(
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST,
-                new Date(),
-                ex.getMessage());
-
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
-    public ResponseEntity<ExceptionMessage> handlerfieldException(MethodArgumentNotValidException ex) {
 
         ExceptionMessage message = new ExceptionMessage(
                 HttpStatus.BAD_REQUEST.value(),
