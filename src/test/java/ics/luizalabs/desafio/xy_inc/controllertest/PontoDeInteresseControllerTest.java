@@ -23,7 +23,6 @@ import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -32,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(PontoDeInteresseController.class)
 public class PontoDeInteresseControllerTest {
-
 
     @Autowired
     private MockMvc mockMvc;
@@ -68,6 +66,7 @@ public class PontoDeInteresseControllerTest {
     }
 
     @Test
+    @DisplayName("Retorna ao Client a Lista de Pontos de Interesse Cadastrados")
     void testList() throws Exception {
 
         PontoDeInteresseDTO dto1 = new PontoDeInteresseDTO("Lanchonete", 10.0, 20.0);
