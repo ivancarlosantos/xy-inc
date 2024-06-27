@@ -26,6 +26,11 @@ public class PontoDeInteresseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.persist(dto));
     }
 
+    @PutMapping(path = "/update/{id}")
+    public ResponseEntity<PontoDeInteresseDTO> update(@PathVariable Long id, @Valid @RequestBody PontoDeInteresseDTO dto) {
+        return ResponseEntity.status(HttpStatus.OK).body(service.updatePOI(id, dto));
+    }
+
     @GetMapping(path = "/list")
     public ResponseEntity<List<PontoDeInteresseDTO>> list() {
         return ResponseEntity.status(HttpStatus.OK).body(service.list());

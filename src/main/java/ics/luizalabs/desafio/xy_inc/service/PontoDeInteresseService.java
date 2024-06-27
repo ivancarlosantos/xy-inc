@@ -26,6 +26,10 @@ public class PontoDeInteresseService {
                 .coordY(dto.coordY())
                 .build();
 
+        if (dto.localPoi().isEmpty()){
+            throw new RegraDeNegocioException("O CAMPO LOCAL NÃO PODE ESTAR VAZIO E/OU NULO");
+        }
+
         if (dto.coordX() < 0 || dto.coordY() < 0) {
             throw new RegraDeNegocioException("COORDENADAS NÃO PODEM SER VALORES NEGATIVOS");
         }
@@ -33,6 +37,26 @@ public class PontoDeInteresseService {
         repository.save(poi);
 
         return new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY());
+    }
+
+    public PontoDeInteresseDTO updatePOI(Long id, PontoDeInteresseDTO dto) {
+
+        PontoDeInteresseModel model = findID(id);
+        model.setLocalPoi(dto.localPoi());
+        model.setCoordX(dto.coordX());
+        model.setCoordY(dto.coordY());
+
+        if (dto.localPoi().isEmpty()){
+            throw new RegraDeNegocioException("O CAMPO LOCAL NÃO PODE ESTAR VAZIO E/OU NULO");
+        }
+
+        if (dto.coordX() < 0 || dto.coordY() < 0) {
+            throw new RegraDeNegocioException("COORDENADAS NÃO PODEM SER VALORES NEGATIVOS");
+        }
+
+        PontoDeInteresseModel resp = repository.save(model);
+
+        return new PontoDeInteresseDTO(resp.getLocalPoi(), resp.getCoordX(), resp.getCoordY());
     }
 
     public List<PontoDeInteresseDTO> list() {
@@ -76,6 +100,17 @@ public class PontoDeInteresseService {
                                       Double refY) {
 
         return calcRange(coordX, coordY, refX, refY);
+    }
+
+    private PontoDeInteresseModel findID(Long id) {
+        Optional<PontoDeInteresseModel> findID = repository.findById(id);
+        PontoDeInteresseModel model = null;
+        if (!findID.isPresent()) {
+            throw new LocalNaoEncontradoException("LOCAL NÃO ENCONTRADO");
+        }
+        model = findID.get();
+
+        return model;
     }
 
     private Double calcRange(Double coordX, Double coordY, Double refX, Double refY) {
