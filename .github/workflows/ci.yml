@@ -1,10 +1,11 @@
-name: Continuous Delivery [CD]
+name: Continuous Integration (CI)
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ master ]
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
     steps:
@@ -31,7 +32,7 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: packing application
+      - name: Package Application App
         run: mvn -B package --file pom.xml
 
   test:
@@ -46,12 +47,10 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: runner test application
-        run: |
-          mvn clean install
-          mvn verify
+      - name: Test Application App
+        run: mvn clean test
 
-  registry:
+  deploy:
     needs: [ test ]
     runs-on: ubuntu-latest
     steps:
@@ -63,12 +62,11 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Docker Registry Application
-        run: mvn -B package --file pom.xml
-
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
       - name: Build Docker Image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/poi .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/poi-app .
+
       - name: Publish Docker image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/poi
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/poi-app
