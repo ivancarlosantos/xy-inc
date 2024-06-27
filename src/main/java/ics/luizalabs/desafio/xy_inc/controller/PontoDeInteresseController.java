@@ -22,7 +22,7 @@ public class PontoDeInteresseController {
     private final PontoDeInteresseService service;
 
     @PostMapping(path = "/save")
-    public ResponseEntity<PontoDeInteresseDTO> persist(@Valid @RequestBody PontoDeInteresseDTO dto) {
+    public ResponseEntity<PontoDeInteresseDTO> persist(@RequestBody @Valid PontoDeInteresseDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.persist(dto));
     }
 

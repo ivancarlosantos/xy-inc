@@ -5,10 +5,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public record PontoDeInteresseDTO(
-        @NotEmpty
+        @NotEmpty(message = "Campo Obrigatório")
         @NotBlank
         String localPoi,
-        @NotNull
+        @NotNull(message = "Coordenada X Obrigatória")
         Double coordX,
-        @NotNull
+        @NotNull(message = "Coordenada Y Obrigatória")
         Double coordY) {}
