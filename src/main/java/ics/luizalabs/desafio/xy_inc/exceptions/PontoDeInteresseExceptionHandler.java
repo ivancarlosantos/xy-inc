@@ -59,4 +59,16 @@ public class PontoDeInteresseExceptionHandler {
 
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
+    public ResponseEntity<ExceptionMessage> handlerfieldException(MethodArgumentNotValidException ex) {
+
+        ExceptionMessage message = new ExceptionMessage(
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST,
+                new Date(),
+                ex.getMessage());
+
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
 }
