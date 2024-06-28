@@ -65,7 +65,7 @@ $ cd [caminho onde realizou o clone]
 ```
 - Construir o projeto
 
-_Caso desejar usar container Docker do Postgres para persistência eo Adminer SGBD, na raíz do projeto, executar:_
+_Caso desejar usar container Docker do Postgres para persistência e o Adminer SGBD, na raíz do projeto, executar:_
 ```bash
 $ docker-compose up -d
 ```
@@ -165,12 +165,13 @@ $ http GET :8080/poi/find?local=LOCAL
 - Procura Ponto de Interesses por referência [[GET]]()
 ```bash
 $ http GET :8080/poi/search?x=20&y=10&max=10
-
- {
+[
+  {
     "localPoi": "LOCAL",
     "coordX": 10.0,
     "coordY": 20.0
- }
+  }
+] 
 ```
 
 - Atualizar Ponto de Interesse [[PUT]]()
