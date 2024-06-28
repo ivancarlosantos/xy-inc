@@ -12,9 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -86,30 +89,6 @@ class PontoDeInteresseServiceTest {
         assertEquals(dto.coordY(), result.coordY());
 
         verify(repository, times(1)).save(any(PontoDeInteresseModel.class));
-
-        verifyNoMoreInteractions(repository);
-    }
-
-    @Test
-    @DisplayName("Retorna Uma Exceção Em Caso do Campo Local Esteja Vazio Ou Nulo")
-    public void testUpdateLocalEmptyOrNull() {
-
-        Long id = 1L;
-        PontoDeInteresseDTO dto = new PontoDeInteresseDTO("", 10.0, 20.0);
-
-        PontoDeInteresseModel model = PontoDeInteresseModel.builder()
-                .localPoi(dto.localPoi())
-                .coordX(dto.coordX())
-                .coordY(dto.coordY())
-                .build();
-
-        when(repository.findById(id)).thenReturn(Optional.of(model));
-
-        Exception exception = assertThrows(RegraDeNegocioException.class, () -> {
-            service.updatePOI(id, dto);
-        });
-
-        assertEquals("O CAMPO LOCAL NÃO PODE ESTAR VAZIO E/OU NULO", exception.getMessage());
 
         verifyNoMoreInteractions(repository);
     }

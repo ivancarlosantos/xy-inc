@@ -26,10 +26,6 @@ public class PontoDeInteresseService {
                 .coordY(dto.coordY())
                 .build();
 
-        if (dto.localPoi().isEmpty()){
-            throw new RegraDeNegocioException("O CAMPO LOCAL NÃO PODE ESTAR VAZIO E/OU NULO");
-        }
-
         if (dto.coordX() < 0 || dto.coordY() < 0) {
             throw new RegraDeNegocioException("COORDENADAS NÃO PODEM SER VALORES NEGATIVOS");
         }
@@ -45,10 +41,6 @@ public class PontoDeInteresseService {
         model.setLocalPoi(dto.localPoi());
         model.setCoordX(dto.coordX());
         model.setCoordY(dto.coordY());
-
-        if (dto.localPoi().isEmpty()){
-            throw new RegraDeNegocioException("O CAMPO LOCAL NÃO PODE ESTAR VAZIO E/OU NULO");
-        }
 
         if (dto.coordX() < 0 || dto.coordY() < 0) {
             throw new RegraDeNegocioException("COORDENADAS NÃO PODEM SER VALORES NEGATIVOS");
@@ -103,11 +95,13 @@ public class PontoDeInteresseService {
     }
 
     private PontoDeInteresseModel findID(Long id) {
-        Optional<PontoDeInteresseModel> findID = repository.findById(id);
+        Optional<PontoDeInteresseModel> findID = Optional
+                .ofNullable(repository
+                        .findById(id)
+                        .orElseThrow(() -> new LocalNaoEncontradoException("LOCAL NÃO ENCONTRADO")));
+
         PontoDeInteresseModel model = null;
-        if (!findID.isPresent()) {
-            throw new LocalNaoEncontradoException("LOCAL NÃO ENCONTRADO");
-        }
+
         model = findID.get();
 
         return model;
