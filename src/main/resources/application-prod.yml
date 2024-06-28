@@ -5,7 +5,7 @@ server:
 #Application Name
 spring:
   application:
-    name: poi
+    name: prod
 
 # Database Configuration
   datasource:
