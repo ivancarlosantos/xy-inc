@@ -4,7 +4,7 @@
  <img src="https://img.shields.io/static/v1?label=Status&message=Em Desenvolvimento&color=&labelColor=90876I" alt="Status" />
 </p>
 
-> # API para Serviço para Localização de Ponto de Interesse (POI's)
+> # API de Serviço para Localização de Pontos de Interesses (POI's)
 
 * **Desafio por** [@Luizalabs](https://www.linkedin.com/company/luizalabs/)
 
@@ -17,7 +17,7 @@ O intuito é, cadastrar locais e estabelecimentos como pontos de interesse, simu
 Sendo assim, foram criados os serviços:
 * Cadastro de Ponto de Interesse
 * Listar Pontos de Interesse
-* Listar Pontos por proximidade: onde relaciona as coordenadas X e Y bem como para uma distância de um ponto máximo (max), onde esse serviço mostrará estabeleimentos a partir de seu ponto de referência
+* Listar Pontos por proximidade: onde relaciona as coordenadas X e Y bem como para uma distância de um ponto máximo (max), onde esse serviço mostrará estabelecimentos a partir de seu ponto de referência
 
 
 > ## Tecnologias Utilizadas
