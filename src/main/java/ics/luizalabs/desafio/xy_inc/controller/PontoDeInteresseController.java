@@ -37,12 +37,12 @@ public class PontoDeInteresseController {
     }
 
     @GetMapping(path = "/find")
-    public ResponseEntity<PontoDeInteresseDTO> foundLocalPOI(@RequestParam(value = "local") String local) {
+    public ResponseEntity<PontoDeInteresseDTO> findLocalPOI(@RequestParam(value = "local") String local) {
         return ResponseEntity.status(HttpStatus.OK).body(service.findLocalPOI(local));
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<PontoDeInteresseDTO>> nearMe(@RequestParam("x") Double x,
+    public ResponseEntity<List<PontoDeInteresseDTO>> search(@RequestParam("x") Double x,
                                                             @RequestParam("y") Double y,
                                                             @RequestParam("max") Double max) {
 
