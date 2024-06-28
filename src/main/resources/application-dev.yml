@@ -15,3 +15,7 @@ spring:
 # Server Port Configuration
 server:
   port: 8080
+
+#Application Name
+  application:
+    name: dev

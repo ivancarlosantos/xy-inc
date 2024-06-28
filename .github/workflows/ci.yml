@@ -18,7 +18,7 @@ jobs:
           cache: 'maven'
 
       - name: Build with Maven
-        run: mvn clean install -DskipTests
+        run: mvn clean install -DskipTests -Pprod
 
   package:
     needs: [ build ]
@@ -33,7 +33,7 @@ jobs:
           cache: 'maven'
 
       - name: Package Application App
-        run: mvn -B package --file pom.xml
+        run: mvn -B package --file pom.xml -Pprod
 
   test:
     needs: [ package ]
@@ -48,7 +48,7 @@ jobs:
           cache: 'maven'
 
       - name: Test Application App
-        run: mvn test
+        run: mvn test -Pprod
 
   deploy:
     needs: [ test ]
