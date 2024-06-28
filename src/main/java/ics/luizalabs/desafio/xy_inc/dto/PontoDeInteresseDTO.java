@@ -5,10 +5,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 public record PontoDeInteresseDTO(
-        @NotEmpty(message = "Campo Obrigatório")
-        @NotBlank
+        @NotEmpty(message = "Campo 'LOCAL' não deve ser vazio e/ou nulo")
+        @NotBlank(message = "Campo 'LOCAL' não deve ser vazio e/ou nulo")
         String localPoi,
-        @NotNull(message = "Coordenada X Obrigatória")
+        @NotNull(message = "Coordenada X não dever vazio e/ou nulo")
         Double coordX,
-        @NotNull(message = "Coordenada Y Obrigatória")
+        @NotNull(message = "Coordenada Y não dever vazio e/ou nulo")
         Double coordY) {}
