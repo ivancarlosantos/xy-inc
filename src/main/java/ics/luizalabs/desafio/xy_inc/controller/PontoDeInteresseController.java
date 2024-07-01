@@ -37,7 +37,7 @@ public class PontoDeInteresseController {
     }
 
     @GetMapping(path = "/find")
-    public ResponseEntity<PontoDeInteresseDTO> findLocalPOI(@RequestParam(value = "local") String local) {
+    public ResponseEntity<List<PontoDeInteresseDTO>> findLocalPOI(@RequestParam(value = "local") String local) {
         return ResponseEntity.status(HttpStatus.OK).body(service.findLocalPOI(local));
     }
 
@@ -52,11 +52,6 @@ public class PontoDeInteresseController {
     @GetMapping(path = "/test")
     public ResponseEntity<RequestTest> test() throws UnknownHostException {
 
-        RequestTest requestTest = RequestTest.builder()
-                .address(InetAddress.getByName(InetAddress.getLocalHost().getHostAddress()))
-                .date(new Date().toString())
-                .build();
-
-        return ResponseEntity.status(HttpStatus.OK).body(requestTest);
+        return ResponseEntity.status(HttpStatus.OK).body(service.test());
     }
 }
