@@ -1,6 +1,7 @@
 package ics.luizalabs.desafio.xy_inc.service;
 
 import ics.luizalabs.desafio.xy_inc.dto.PontoDeInteresseDTO;
+import ics.luizalabs.desafio.xy_inc.dto.RequestTest;
 import ics.luizalabs.desafio.xy_inc.exceptions.RegraDeNegocioException;
 import ics.luizalabs.desafio.xy_inc.exceptions.LocalNaoEncontradoException;
 import ics.luizalabs.desafio.xy_inc.model.PontoDeInteresseModel;
@@ -8,6 +9,9 @@ import ics.luizalabs.desafio.xy_inc.repository.PontoDeInteresseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,17 +63,13 @@ public class PontoDeInteresseService {
                 .toList();
     }
 
-    public PontoDeInteresseDTO findLocalPOI(String local) {
+    public List<PontoDeInteresseDTO> findLocalPOI(String local) {
 
-        Optional<PontoDeInteresseDTO> pdi = Optional
-                .ofNullable(repository
-                        .findByLocalPOI(local)
-                        .map(poi -> new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
-                        .orElseThrow(() -> new LocalNaoEncontradoException("LOCAL NÃO ENCONTRADO")))
+        return repository
+                .findByLocalPOI(local)
                 .stream()
-                .findFirst();
-
-        return pdi.get();
+                .map(poi -> new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
+                .toList();
     }
 
     public List<PontoDeInteresseDTO> searchPOI(Double x, Double y, Double max) {
@@ -84,6 +84,16 @@ public class PontoDeInteresseService {
                 .filter(p -> searchByCoordinate(x, y, p.getCoordX(), p.getCoordY()) <= max)
                 .map(poi -> new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
                 .toList();
+    }
+
+    public RequestTest test() throws UnknownHostException {
+
+        return RequestTest
+                .builder()
+                .ownerHost(InetAddress.getLocalHost().getHostName())
+                .address(InetAddress.getLocalHost().getHostAddress())
+                .date(new Date().toString())
+                .build();
     }
 
     private Double searchByCoordinate(Double coordX,

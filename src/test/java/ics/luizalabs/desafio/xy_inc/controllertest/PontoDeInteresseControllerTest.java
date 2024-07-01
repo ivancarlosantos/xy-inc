@@ -18,14 +18,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
 import java.net.InetAddress;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
@@ -49,12 +52,14 @@ public class PontoDeInteresseControllerTest {
         PontoDeInteresseDTO dto = new PontoDeInteresseDTO("Lanchonete", 10.0, 20.0);
 
         PontoDeInteresseModel model = PontoDeInteresseModel.builder()
+                .id(1L)
                 .localPoi(dto.localPoi())
                 .coordX(dto.coordX())
                 .coordY(dto.coordY())
                 .criadoEm(LocalDateTime.now())
                 .build();
 
+        when(service.persist(dto)).thenReturn(dto);
         String request = mapper.writeValueAsString(model);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/poi/save")
@@ -62,6 +67,9 @@ public class PontoDeInteresseControllerTest {
                         .characterEncoding("UTF-8")
                         .content(request))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(jsonPath("$.localPoi").value(dto.localPoi()))
+                .andExpect(jsonPath("$.coordX").value(dto.coordX()))
+                .andExpect(jsonPath("$.coordY").value(dto.coordY()))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -79,6 +87,9 @@ public class PontoDeInteresseControllerTest {
                         .characterEncoding("UTF-8")
                         .content(response))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.localPoi").value(dto.localPoi()))
+                .andExpect(jsonPath("$.coordX").value(dto.coordX()))
+                .andExpect(jsonPath("$.coordY").value(dto.coordY()))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -92,6 +103,13 @@ public class PontoDeInteresseControllerTest {
 
         mockMvc.perform(get("/poi/list"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].localPoi").value(dto1.localPoi()))
+                .andExpect(jsonPath("$[0].coordX").value(dto1.coordX()))
+                .andExpect(jsonPath("$[0].coordY").value(dto1.coordY()))
+
+                .andExpect(jsonPath("$[1].localPoi").value(dto2.localPoi()))
+                .andExpect(jsonPath("$[1].coordX").value(dto2.coordX()))
+                .andExpect(jsonPath("$[1].coordY").value(dto2.coordY()))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -101,11 +119,12 @@ public class PontoDeInteresseControllerTest {
 
         PontoDeInteresseDTO dto = new PontoDeInteresseDTO("Lanchonete", 10.0, 20.0);
 
-        when(service.findLocalPOI("Lanchonete")).thenReturn(dto);
+        when(service.findLocalPOI("Lanchonete")).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/poi/find")
                         .param("local", "Lanchonete"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].localPoi", is("Lanchonete")))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -124,6 +143,9 @@ public class PontoDeInteresseControllerTest {
                         .param("max", "10.0"))
 
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].localPoi").value(dto.localPoi()))
+                .andExpect(jsonPath("$[0].coordX").value(dto.coordX()))
+                .andExpect(jsonPath("$[0].coordY").value(dto.coordY()))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -132,10 +154,12 @@ public class PontoDeInteresseControllerTest {
     void testEndpointApplication() throws Exception {
 
         RequestTest requestTest = RequestTest.builder()
-                .address(InetAddress.getByName(InetAddress.getLocalHost().getHostAddress()))
+                .ownerHost(InetAddress.getLocalHost().getHostName())
+                .address(InetAddress.getLocalHost().getHostAddress())
                 .date(new Date().toString())
                 .build();
 
+        when(service.test()).thenReturn(requestTest);
         String response = mapper.writeValueAsString(requestTest);
 
         mockMvc.perform(get("/poi/test")
@@ -143,6 +167,8 @@ public class PontoDeInteresseControllerTest {
                         .characterEncoding("UTF-8")
                         .content(response))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.address").value(requestTest.getAddress()))
+                .andExpect(jsonPath("$.date").value(requestTest.getDate()))
                 .andDo(MockMvcResultHandlers.print());
     }
 }

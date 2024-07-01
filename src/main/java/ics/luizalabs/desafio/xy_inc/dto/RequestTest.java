@@ -11,7 +11,9 @@ import java.net.InetAddress;
 @Builder
 public class RequestTest {
 
-    private InetAddress address;
+    private String ownerHost;
+
+    private String address;
 
     private String date;
 }

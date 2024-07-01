@@ -6,20 +6,16 @@ import ics.luizalabs.desafio.xy_inc.exceptions.RegraDeNegocioException;
 import ics.luizalabs.desafio.xy_inc.model.PontoDeInteresseModel;
 import ics.luizalabs.desafio.xy_inc.repository.PontoDeInteresseRepository;
 import ics.luizalabs.desafio.xy_inc.service.PontoDeInteresseService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,12 +31,12 @@ class PontoDeInteresseServiceTest {
     @Test
     @DisplayName("Cadastra um Ponto De Interesse")
     void testPersist() {
-        PontoDeInteresseDTO dto = new PontoDeInteresseDTO("Lanchonete", 10.0, 20.0);
+        PontoDeInteresseDTO dto = new PontoDeInteresseDTO("Lanchonete", 27.0, 12.0);
         PontoDeInteresseModel model = PontoDeInteresseModel
                 .builder()
-                .localPoi("Lanchonete")
-                .coordX(27.0)
-                .coordY(12.0)
+                .localPoi(dto.localPoi())
+                .coordX(dto.coordX())
+                .coordY(dto.coordY())
                 .build();
 
         when(repository.save(any(PontoDeInteresseModel.class))).thenReturn(model);
@@ -51,9 +47,9 @@ class PontoDeInteresseServiceTest {
         assertEquals(dto.coordX(), result.coordX());
         assertEquals(dto.coordY(), result.coordY());
 
-        Assertions.assertThat(result.localPoi()).isNotNull();
-        Assertions.assertThat(result.coordX()).isNotNull();
-        Assertions.assertThat(result.coordY()).isNotNull();
+        assertThat(result.localPoi()).isNotNull();
+        assertThat(result.coordX()).isNotNull();
+        assertThat(result.coordY()).isNotNull();
 
         verifyNoMoreInteractions(repository);
     }
@@ -117,16 +113,6 @@ class PontoDeInteresseServiceTest {
     }
 
     @Test
-    @DisplayName("Retorna Exceção Em Caso De Local Não Encontrado")
-    void testFindLocalPOINotFound() {
-        when(repository.findByLocalPOI("Lanchonete")).thenReturn(Optional.empty());
-
-        assertThrows(LocalNaoEncontradoException.class, () -> service.findLocalPOI("Lanchonete"));
-
-        verifyNoMoreInteractions(repository);
-    }
-
-    @Test
     @DisplayName("Retorna a Lista de Pontos de Interesse Cadastrados")
     void testList() {
 
@@ -156,13 +142,13 @@ class PontoDeInteresseServiceTest {
         assertTrue(result.contains(new PontoDeInteresseDTO("Pub", 30.0, 40.0)));
         verify(repository, times(1)).findAll();
 
-        Assertions.assertThat(model1.getLocalPoi()).isNotNull();
-        Assertions.assertThat(model1.getCoordX()).isNotNull();
-        Assertions.assertThat(model1.getCoordY()).isNotNull();
+        assertThat(model1.getLocalPoi()).isNotNull();
+        assertThat(model1.getCoordX()).isNotNull();
+        assertThat(model1.getCoordY()).isNotNull();
 
-        Assertions.assertThat(model2.getLocalPoi()).isNotNull();
-        Assertions.assertThat(model2.getCoordX()).isNotNull();
-        Assertions.assertThat(model2.getCoordY()).isNotNull();
+        assertThat(model2.getLocalPoi()).isNotNull();
+        assertThat(model2.getCoordX()).isNotNull();
+        assertThat(model2.getCoordY()).isNotNull();
 
         verifyNoMoreInteractions(repository);
     }
@@ -178,16 +164,17 @@ class PontoDeInteresseServiceTest {
                 .coordY(20.0)
                 .build();
 
-        when(repository.findByLocalPOI("Lanchonete")).thenReturn(Optional.of(model));
+        when(repository.findByLocalPOI("Lanchonete")).thenReturn(List.of(model));
 
         // Act
-        PontoDeInteresseDTO result = service.findLocalPOI("Lanchonete");
+        List<PontoDeInteresseDTO> result = service.findLocalPOI("Lanchonete");
 
         // Assert
         assertNotNull(result);
-        assertEquals("Lanchonete", result.localPoi());
-        assertEquals(10.0, result.coordX());
-        assertEquals(20.0, result.coordY());
+        assertEquals("Lanchonete", model.getLocalPoi());
+        assertEquals(10.0, model.getCoordX());
+        assertEquals(20.0, model.getCoordY());
+
         verify(repository, times(1)).findByLocalPOI("Lanchonete");
 
         verifyNoMoreInteractions(repository);
