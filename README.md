@@ -17,6 +17,7 @@ O intuito é, cadastrar locais e estabelecimentos como pontos de interesse, simu
 Sendo assim, foram criados os serviços:
 * Cadastro de Ponto de Interesse
 * Listar Pontos de Interesse
+* Encontrar Local de Ponto de Interesse por Filtro (por letra/terminação inicial e/ou final)  
 * Listar Pontos por proximidade: onde relaciona as coordenadas X e Y bem como para uma distância de um ponto máximo (max), onde esse serviço mostrará estabelecimentos a partir de seu ponto de referência
 
 
@@ -153,6 +154,8 @@ $ http GET :8080/poi/list
 ]
 ```
 - Busca Ponto de Interesse por Local [[GET]]()
+
+`PS: Você pode encontrar/filtrar por inicio, meio ou final do nome local`
 ```bash
 $ http GET :8080/poi/find?local=LOCAL
 
