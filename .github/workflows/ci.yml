@@ -70,8 +70,3 @@ jobs:
 
       - name: Publish Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/poi-app
-
-      - name: Create pull request
-        run: gh pr create -B dev -H master --title 'Merge branch dev into master' --body 'Created automatic Pull Request by Github action.'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_SECRET_KEY }}

@@ -51,7 +51,14 @@ jobs:
 
       - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
       - name: Build Docker Image
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/poi .
+
       - name: Publish Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/poi
+
+      - name: Create pull request
+        run: gh pr create -B dev -H master --title 'Pull Request/Merge branch dev into master' --body 'Created automatic Pull Request by Github action.'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_SECRET_KEY }}
