@@ -59,6 +59,9 @@ jobs:
         run: docker push ${{ secrets.DOCKER_USERNAME }}/poi
 
       - name: Create Pull Request
-        run: gh pr create -B master -H dev --title 'Pull Request/Merge Branch dev into master' --body 'Created automatic Pull Request by Github action.'
+        run: gh pr create -B master -H dev --title 'Pull Request/Merge Branch dev into master'
         env:
           GITHUB_TOKEN: ${{ secrets.GH_SECRET_KEY }}
+          BODY: >
+            Este Pull Request é realizado para merge com a branch master
+            Em caso de aprovação, realizar o merge na master =)

@@ -1,7 +1,6 @@
 package ics.luizalabs.desafio.xy_inc.servicetest;
 
 import ics.luizalabs.desafio.xy_inc.dto.PontoDeInteresseDTO;
-import ics.luizalabs.desafio.xy_inc.exceptions.LocalNaoEncontradoException;
 import ics.luizalabs.desafio.xy_inc.exceptions.RegraDeNegocioException;
 import ics.luizalabs.desafio.xy_inc.model.PontoDeInteresseModel;
 import ics.luizalabs.desafio.xy_inc.repository.PontoDeInteresseRepository;
