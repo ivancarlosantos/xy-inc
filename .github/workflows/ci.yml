@@ -50,7 +50,7 @@ jobs:
       - name: Test Application App
         run: mvn test -Pprod
 
-  deploy: #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
+  deploy:
     needs: [ test ]
     runs-on: ubuntu-latest
     steps:
@@ -72,6 +72,6 @@ jobs:
         run: docker push ${{ secrets.DOCKER_USERNAME }}/poi-app
 
       - name: Create pull request
-        run: gh pr create -B master -H dev --title 'Merge branch dev into master' --body 'Created automatic Pull Request by Github action.'
+        run: gh pr create -B dev -H master --title 'Merge branch dev into master' --body 'Created automatic Pull Request by Github action.'
         env:
           GITHUB_TOKEN: ${{ secrets.GH_SECRET_KEY }}
