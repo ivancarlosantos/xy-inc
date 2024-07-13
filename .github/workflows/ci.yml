@@ -68,5 +68,5 @@ jobs:
       - name: Build Docker Image
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/poi-app .
 
-      - name: Publish Docker image
+      - name: Publish Docker Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/poi-app
