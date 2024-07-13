@@ -49,12 +49,10 @@ jobs:
       - name: "Hadolint Dockerfile"
         run: |
           sudo apt-get update -y && sudo apt-get upgrade -y
-          wget https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
-          wget https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64.sha256
-          sha256sum -c hadolint-Linux-x86_64.sha256
-          chmod +x ./hadolint-Linux-x86_64
-          mv hadolint-Linux-x86_64 hadolint
-          hadolint --help
+          wget -O hadolint https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
+          mv hadolint /usr/local/bin/hadolint
+          chmod +x /usr/local/bin/hadolint
+          hadolint --version
           hadolint Dockerfile
 
   registry:
