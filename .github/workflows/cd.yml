@@ -35,7 +35,7 @@ jobs:
         run: mvn -B package --file pom.xml -DskipTests -P dev
 
   hadolint:
-    needs: [ build ]
+    needs: [ package ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.1.7
@@ -50,7 +50,7 @@ jobs:
         run: |
           sudo apt-get update -y && sudo apt-get upgrade -y
           wget -O hadolint https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
-          sudo mv hadolint /usr/local/bin/hadolint -y
+          sudo mv hadolint /usr/local/bin/hadolint
           sudo +x /lusr/local/bin/hadolint -y
           hadolint --help
           hadolint Dockerfile
