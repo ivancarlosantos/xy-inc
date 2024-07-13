@@ -56,7 +56,7 @@ Tenha instalado em seu sistema operacional:
 
 > ## Como Executar
 
-- Clonar repositório `GIT`
+- Clonar repositório `GITHUB`
 ```bash
 $ git clone https://github.com/ivancarlosantos/xy-inc.git
 ```

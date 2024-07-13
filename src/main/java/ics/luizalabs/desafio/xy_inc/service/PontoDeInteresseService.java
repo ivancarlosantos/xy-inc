@@ -6,6 +6,9 @@ import ics.luizalabs.desafio.xy_inc.exceptions.RegraDeNegocioException;
 import ics.luizalabs.desafio.xy_inc.exceptions.LocalNaoEncontradoException;
 import ics.luizalabs.desafio.xy_inc.model.PontoDeInteresseModel;
 import ics.luizalabs.desafio.xy_inc.repository.PontoDeInteresseRepository;
+import io.awspring.cloud.sqs.annotation.SqsListener;
+import io.awspring.cloud.sqs.operations.SendResult;
+import io.awspring.cloud.sqs.operations.SqsTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +22,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PontoDeInteresseService {
 
+    private final SqsTemplate sqsTemplate;
+
     private final PontoDeInteresseRepository repository;
 
+    //@SqsListener("poi_sqs")
     public PontoDeInteresseDTO persist(PontoDeInteresseDTO dto) {
 
         PontoDeInteresseModel poi = PontoDeInteresseModel
@@ -34,9 +40,15 @@ public class PontoDeInteresseService {
             throw new RegraDeNegocioException("COORDENADAS NÃO PODEM SER VALORES NEGATIVOS");
         }
 
+
         repository.save(poi);
 
         return new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY());
+    }
+
+    private void sqsMessage(PontoDeInteresseDTO dto) {
+        var SQS = "https://localhost.localstack.cloud:4566/000000000000/poi_sqs";
+        sqsTemplate.send(SQS, new PontoDeInteresseDTO(dto.localPoi(), dto.coordX(), dto.coordY()));
     }
 
     public PontoDeInteresseDTO updatePOI(Long id, PontoDeInteresseDTO dto) {
