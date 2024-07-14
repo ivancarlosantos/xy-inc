@@ -6,8 +6,6 @@ import ics.luizalabs.desafio.xy_inc.exceptions.RegraDeNegocioException;
 import ics.luizalabs.desafio.xy_inc.exceptions.LocalNaoEncontradoException;
 import ics.luizalabs.desafio.xy_inc.model.PontoDeInteresseModel;
 import ics.luizalabs.desafio.xy_inc.repository.PontoDeInteresseRepository;
-import io.awspring.cloud.sqs.annotation.SqsListener;
-import io.awspring.cloud.sqs.operations.SendResult;
 import io.awspring.cloud.sqs.operations.SqsTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -133,4 +131,7 @@ public class PontoDeInteresseService {
         return Math.sqrt(Math.pow(refX - coordX, 2) + Math.pow(refY - coordY, 2));
     }
 
+    public void saveAll(List<PontoDeInteresseModel> modelList) {
+        repository.saveAll(modelList);
+    }
 }

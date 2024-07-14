@@ -12,6 +12,13 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
 
+#Redis
+  cache:
+    type: redis
+    redis:
+      host: localhost
+      port: 6379
+
 # Server Port Configuration
 server:
   port: 8080
