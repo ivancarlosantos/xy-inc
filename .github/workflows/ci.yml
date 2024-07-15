@@ -61,9 +61,6 @@ jobs:
       - name: Verify that redis is up
         run: redis-cli ping
 
-      - name: Up Container Redis
-        run: docker run -d --name redis-cache -p 6379:6379 -e REDIS_PASSWORD=my-password -e REDIS_PORT=6379 -e REDIS_DATABASES=16 redis:latest
-
       - name: Test Application App
         run: mvn test -P prod
 
