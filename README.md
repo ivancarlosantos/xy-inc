@@ -28,6 +28,8 @@ As seguintes ferramentas foram utilizadas na construção do projeto
 - [Spring Boot](https://spring.io/)
 - [Postgres](https://www.postgresql.org/)
 - [Adminer](https://www.adminer.org/)
+- [Redis](https://redis.io/)
+- [Redis Commander](https://joeferner.github.io/redis-commander/)
 - [Docker](https://www.docker.com/get-started/)
 - [JUnit](https://junit.org/junit5/)
 - [Pitest](https://pitest.org/)
@@ -41,6 +43,7 @@ As seguintes ferramentas foram utilizadas na construção do projeto
 - API REST
 - Containerização
 - Injeção de Dependências
+- Persistência em Cache
 - Testes de Unidade, Integração e cobertura
 - Testcontainers
 - Tratamento de respostas de erro
@@ -86,6 +89,30 @@ Com o container do _**Adminer SGBD**_ ativo, preencha os seguintes campos:
 > 
 > [**Senha**]() - [_**12345**_]()
 
+> ## REDIS & REDIS COMMANDER
+ O que é REDIS? 
+
+_Redis é um armazenamento de estrutura de dados em memória, usado como um banco de dados em memória distribuído de chave-valor, cache e agente de mensagens, com durabilidade opcional._
+
+Na aplicação, todos os dados serão cacheados nos Redis temporariamente. Após um período, os mesmos serão persistidos (salvos) em um banco relacional. 
+
+- Como utilizar o `REDIS`
+
+Realizado o clone do projeto, com o Docker ativo, execute:
+
+````bash
+$ docker-compose up -d
+````
+> O Que é REDIS Commander?
+
+_O Redis Commander é uma ferramenta web de gerenciamento do Redis Cache escrita em Node.JS. Ela oferece uma interface web para visualizar chaves, adicionar novas chaves, visualizar os dados dentro das chaves, entre outras operações._
+
+Para acessar o `REDIS COMMANDER` 
+
+````bash
+$ http://localhost:8081
+````
+
 > ## DEMO
 
 - Caso desejar testar a aplicação em ambiente `dev`, com o Docker ativo, execute:
@@ -100,14 +127,15 @@ _``PS: Em caso de execução da aplicação em ambiente dev, os dados serão sal
 
 Com a base de dados ativa, inicializar o projeto:
 
-- Na raíz do projeto, executar a aplicação (caso tenha o maven instalado em sua máquina)
+- Na raíz do projeto, executar a aplicação com o ambiente desejado (dev/prod)
 ```bash
-$ mvn spring-boot:run
+$ mvn spring-boot:run -P prod
 ```
 - ou use o wrapper run
 ```bash
-$ .\mvnw spring-boot:run
+$ .\mvnw spring-boot:run -P prod
 ```
+
 # API Endpoints
 API poderá ser acessada em [http://localhost:8080/poi/test](http://localhost:8080/poi/test)
 
