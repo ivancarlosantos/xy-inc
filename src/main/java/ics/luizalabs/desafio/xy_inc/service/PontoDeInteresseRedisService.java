@@ -1,8 +1,6 @@
 package ics.luizalabs.desafio.xy_inc.service;
 
-import ics.luizalabs.desafio.xy_inc.dto.PontoDeInteresseDTO;
 import ics.luizalabs.desafio.xy_inc.dto.RequestTest;
-import ics.luizalabs.desafio.xy_inc.exceptions.LocalNaoEncontradoException;
 import ics.luizalabs.desafio.xy_inc.exceptions.RegraDeNegocioException;
 import ics.luizalabs.desafio.xy_inc.model.PontoDeInteresseModel;
 import ics.luizalabs.desafio.xy_inc.model.PontoDeInteresseRedis;
@@ -74,7 +72,7 @@ public class PontoDeInteresseRedisService {
                 .toList();
     }
 
-    public List<PontoDeInteresseDTO> searchPOI(Double x, Double y, Double max) {
+    public List<PontoDeInteresseRedis> searchPOI(Double x, Double y, Double max) {
 
         Double xMin = x - max;
         Double xMax = x + max;
@@ -84,7 +82,6 @@ public class PontoDeInteresseRedisService {
         return redisRepository.findLocalRef(xMin, xMax, yMin, yMax)
                 .stream()
                 .filter(p -> searchByCoordinate(x, y, p.getCoordX(), p.getCoordY()) <= max)
-                .map(poi -> new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
                 .toList();
     }
 
