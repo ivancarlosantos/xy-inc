@@ -31,7 +31,7 @@ class PontoDeInteresseServiceRedisTest {
     @Test
     @DisplayName("Cadastra um Ponto De Interesse")
     void testPersist() {
-        PontoDeInteresseDTO dto = new PontoDeInteresseDTO("Lanchonete", 27.0, 12.0);
+        PontoDeInteresseDTO dto = new PontoDeInteresseDTO(1L, "Lanchonete", 27.0, 12.0);
         PontoDeInteresseRedis poiRedis = PontoDeInteresseRedis
                 .builder()
                 .id("1L")
