@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
-import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -54,10 +53,11 @@ public class PontoDeInteresseControllerTest {
     @DisplayName("Client Cadastra um Ponto De Interesse")
     void persist() throws Exception {
 
-        PontoDeInteresseDTO dto = new PontoDeInteresseDTO("Lanchonete", 10.0, 20.0);
+        Long id = 1L;
+        PontoDeInteresseDTO dto = new PontoDeInteresseDTO(id, "Lanchonete", 10.0, 20.0);
 
         PontoDeInteresseModel model = PontoDeInteresseModel.builder()
-                .id(1L)
+                .id(id)
                 .localPoi(dto.localPoi())
                 .coordX(dto.coordX())
                 .coordY(dto.coordY())
@@ -72,6 +72,7 @@ public class PontoDeInteresseControllerTest {
                         .characterEncoding("UTF-8")
                         .content(request))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(jsonPath("$.id").value(dto.id()))
                 .andExpect(jsonPath("$.localPoi").value(dto.localPoi()))
                 .andExpect(jsonPath("$.coordX").value(dto.coordX()))
                 .andExpect(jsonPath("$.coordY").value(dto.coordY()))
@@ -82,7 +83,7 @@ public class PontoDeInteresseControllerTest {
     @DisplayName("Client Atualiza Um Ponto De Interesse")
     void testUpdate() throws Exception {
         Long id = 1L;
-        PontoDeInteresseDTO dto = new PontoDeInteresseDTO("Lanchonete", 10.0, 20.0);
+        PontoDeInteresseDTO dto = new PontoDeInteresseDTO(id, "Lanchonete", 10.0, 20.0);
         when(service.updatePOI(id, dto)).thenReturn(dto);
 
         String response = mapper.writeValueAsString(dto);
@@ -102,16 +103,18 @@ public class PontoDeInteresseControllerTest {
     @DisplayName("Retorna ao Client a Lista de Pontos de Interesse Cadastrados")
     void testList() throws Exception {
 
-        PontoDeInteresseDTO dto1 = new PontoDeInteresseDTO("Lanchonete", 10.0, 20.0);
-        PontoDeInteresseDTO dto2 = new PontoDeInteresseDTO("Pub", 30.0, 40.0);
+        PontoDeInteresseDTO dto1 = new PontoDeInteresseDTO(1L,"Lanchonete", 10.0, 20.0);
+        PontoDeInteresseDTO dto2 = new PontoDeInteresseDTO(2L,"Pub", 30.0, 40.0);
         when(service.list()).thenReturn(List.of(dto1, dto2));
 
         mockMvc.perform(get("/poi/list"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(dto1.id()))
                 .andExpect(jsonPath("$[0].localPoi").value(dto1.localPoi()))
                 .andExpect(jsonPath("$[0].coordX").value(dto1.coordX()))
                 .andExpect(jsonPath("$[0].coordY").value(dto1.coordY()))
 
+                .andExpect(jsonPath("$[1].id").value(dto2.id()))
                 .andExpect(jsonPath("$[1].localPoi").value(dto2.localPoi()))
                 .andExpect(jsonPath("$[1].coordX").value(dto2.coordX()))
                 .andExpect(jsonPath("$[1].coordY").value(dto2.coordY()))
@@ -129,10 +132,12 @@ public class PontoDeInteresseControllerTest {
 
         mockMvc.perform(get("/poi/list-redis"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(redis1.getId()))
                 .andExpect(jsonPath("$[0].localPoi").value(redis1.getLocalPoi()))
                 .andExpect(jsonPath("$[0].coordX").value(redis1.getCoordX()))
                 .andExpect(jsonPath("$[0].coordY").value(redis1.getCoordY()))
 
+                .andExpect(jsonPath("$[1].id").value(redis2.getId()))
                 .andExpect(jsonPath("$[1].localPoi").value(redis2.getLocalPoi()))
                 .andExpect(jsonPath("$[1].coordX").value(redis2.getCoordX()))
                 .andExpect(jsonPath("$[1].coordY").value(redis2.getCoordY()))
@@ -143,14 +148,15 @@ public class PontoDeInteresseControllerTest {
     @DisplayName("Client Encontra um Local Cadastrado")
     void testFindLocalPOI() throws Exception {
 
-        PontoDeInteresseDTO dto = new PontoDeInteresseDTO("Lanchonete", 10.0, 20.0);
+        PontoDeInteresseDTO dto = new PontoDeInteresseDTO(1L,"Lanchonete", 10.0, 20.0);
 
         when(service.findLocalPOI("Lanchonete")).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/poi/find")
                         .param("local", "Lanchonete"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].localPoi", is("Lanchonete")))
+                .andExpect(jsonPath("$[0].id").value(dto.id()))
+                .andExpect(jsonPath("$[0].localPoi").value(dto.localPoi()))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -158,7 +164,7 @@ public class PontoDeInteresseControllerTest {
     @DisplayName("Retorna ao Client uma Lista de Locais de Pontos de Interesse em relação a Distância Fornecida")
     void testSearchPOI() throws Exception {
 
-        PontoDeInteresseDTO dto = new PontoDeInteresseDTO("Lanchonete", 10.0, 20.0);
+        PontoDeInteresseDTO dto = new PontoDeInteresseDTO(1L,"Lanchonete", 10.0, 20.0);
 
         when(service.searchPOI(10.0, 20.0, 10.0))
                 .thenReturn(List.of(dto));
@@ -169,6 +175,7 @@ public class PontoDeInteresseControllerTest {
                         .param("max", "10.0"))
 
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(dto.id()))
                 .andExpect(jsonPath("$[0].localPoi").value(dto.localPoi()))
                 .andExpect(jsonPath("$[0].coordX").value(dto.coordX()))
                 .andExpect(jsonPath("$[0].coordY").value(dto.coordY()))

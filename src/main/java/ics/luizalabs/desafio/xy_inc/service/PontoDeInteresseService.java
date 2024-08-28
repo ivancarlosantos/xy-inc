@@ -6,7 +6,6 @@ import ics.luizalabs.desafio.xy_inc.exceptions.RegraDeNegocioException;
 import ics.luizalabs.desafio.xy_inc.exceptions.LocalNaoEncontradoException;
 import ics.luizalabs.desafio.xy_inc.model.PontoDeInteresseModel;
 import ics.luizalabs.desafio.xy_inc.repository.PontoDeInteresseRepository;
-import io.awspring.cloud.sqs.operations.SqsTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +19,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PontoDeInteresseService {
 
-    private final SqsTemplate sqsTemplate;
-
     private final PontoDeInteresseRepository repository;
 
-    //@SqsListener("poi_sqs")
     public PontoDeInteresseDTO persist(PontoDeInteresseDTO dto) {
 
         PontoDeInteresseModel poi = PontoDeInteresseModel
@@ -38,15 +34,9 @@ public class PontoDeInteresseService {
             throw new RegraDeNegocioException("COORDENADAS NÃO PODEM SER VALORES NEGATIVOS");
         }
 
-
         repository.save(poi);
 
-        return new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY());
-    }
-
-    private void sqsMessage(PontoDeInteresseDTO dto) {
-        var SQS = "https://localhost.localstack.cloud:4566/000000000000/poi_sqs";
-        sqsTemplate.send(SQS, new PontoDeInteresseDTO(dto.localPoi(), dto.coordX(), dto.coordY()));
+        return new PontoDeInteresseDTO(poi.getId(), poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY());
     }
 
     public PontoDeInteresseDTO updatePOI(Long id, PontoDeInteresseDTO dto) {
@@ -62,14 +52,14 @@ public class PontoDeInteresseService {
 
         PontoDeInteresseModel resp = repository.save(model);
 
-        return new PontoDeInteresseDTO(resp.getLocalPoi(), resp.getCoordX(), resp.getCoordY());
+        return new PontoDeInteresseDTO(resp.getId(), resp.getLocalPoi(), resp.getCoordX(), resp.getCoordY());
     }
 
     public List<PontoDeInteresseDTO> list() {
         return repository
                 .findAll()
                 .stream()
-                .map(poi -> new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
+                .map(poi -> new PontoDeInteresseDTO(poi.getId(), poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
                 .toList();
     }
 
@@ -78,7 +68,7 @@ public class PontoDeInteresseService {
         return repository
                 .findByLocalPOI(local)
                 .stream()
-                .map(poi -> new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
+                .map(poi -> new PontoDeInteresseDTO(poi.getId(), poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
                 .toList();
     }
 
@@ -92,7 +82,7 @@ public class PontoDeInteresseService {
         return repository.findLocalRef(xMin, xMax, yMin, yMax)
                 .stream()
                 .filter(p -> searchByCoordinate(x, y, p.getCoordX(), p.getCoordY()) <= max)
-                .map(poi -> new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
+                .map(poi -> new PontoDeInteresseDTO(poi.getId(), poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
                 .toList();
     }
 

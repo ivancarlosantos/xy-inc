@@ -6,6 +6,8 @@ import ics.luizalabs.desafio.xy_inc.model.PontoDeInteresseModel;
 import ics.luizalabs.desafio.xy_inc.model.PontoDeInteresseRedis;
 import ics.luizalabs.desafio.xy_inc.repository.PontoDeInteresseRedisRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -16,17 +18,31 @@ import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static ics.luizalabs.desafio.xy_inc.configuration.RabbitMqConfig.*;
+
 @Service
 @RequiredArgsConstructor
 @EnableScheduling
 public class PontoDeInteresseRedisService {
 
-    private final int MINUTO = 1000 * 60;
+    private final int MINUTO = 2000 * 60;
+
     private final long MINUTOS = MINUTO;
+
+    private final RabbitTemplate rabbitTemplate;
 
     private final PontoDeInteresseRedisRepository redisRepository;
 
     private final PontoDeInteresseService pontoDeInteresseService;
+
+
+    @RabbitListener(queues = QUEUE)
+    public void listen(PontoDeInteresseRedis redis) {
+
+        System.out.println("================================");
+        System.out.println("receiver: " + redis.getLocalPoi());
+        redisRepository.save(redis);
+    }
 
     public PontoDeInteresseRedis persist(PontoDeInteresseRedis redis) {
 
@@ -34,7 +50,7 @@ public class PontoDeInteresseRedisService {
             throw new RegraDeNegocioException("COORDENADAS NÃO PODEM SER VALORES NEGATIVOS");
         }
 
-        redisRepository.save(redis);
+        rabbitTemplate.convertAndSend(EXCHANGE, ROUTING_KEY, redis);
 
         return redis;
     }
@@ -56,7 +72,10 @@ public class PontoDeInteresseRedisService {
 
                         PontoDeInteresseModel model = new PontoDeInteresseModel(null, poiRedis.getLocalPoi(), poiRedis.getCoordX(), poiRedis.getCoordY(), LocalDateTime.now());
                         modelList.add(model);
-                        System.out.println(model.getLocalPoi());
+                        System.out.println("==============================");
+                        System.out.println("local:  " + model.getLocalPoi());
+                        System.out.println("coordX: " + model.getCoordX());
+                        System.out.println("coordY: " + model.getCoordY());
                     });
 
             pontoDeInteresseService.saveAll(modelList);

@@ -1,12 +1,17 @@
 package ics.luizalabs.desafio.xy_inc.exceptions;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Objects;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestControllerAdvice
 public class PontoDeInteresseExceptionHandler {
@@ -28,10 +33,14 @@ public class PontoDeInteresseExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ApiErrors handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-
-        String errors = Objects.requireNonNull(ex.getFieldError()).getDefaultMessage();
-        return new ApiErrors(errors);
+    public ResponseEntity<?> handleArgumentNotValid(MethodArgumentNotValidException ex) {
+        List<ObjectError> errors = ex.getBindingResult().getAllErrors();
+        Map<String, String> error = new LinkedHashMap<>();
+        errors.forEach(er -> {
+            String message = er.getDefaultMessage();
+            String field = ((FieldError) (er)).getField();
+            error.put(field, message);
+        });
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }
