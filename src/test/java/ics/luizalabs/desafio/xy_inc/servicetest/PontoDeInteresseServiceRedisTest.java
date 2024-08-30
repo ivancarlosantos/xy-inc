@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +29,9 @@ class PontoDeInteresseServiceRedisTest {
     @Mock
     private PontoDeInteresseRedisRepository redisRepository;
 
+    @Mock
+    private RabbitTemplate rabbitTemplate;
+
     @Test
     @DisplayName("Cadastra um Ponto De Interesse")
     void testPersist() {
@@ -43,6 +47,7 @@ class PontoDeInteresseServiceRedisTest {
         when(redisRepository.save(any(PontoDeInteresseRedis.class))).thenReturn(poiRedis);
 
         PontoDeInteresseRedis result = redisService.persist(poiRedis);
+        redisService.listen(poiRedis);
 
         assertEquals(dto.localPoi(), result.getLocalPoi());
         assertEquals(dto.coordX(), result.getCoordX());
@@ -53,6 +58,7 @@ class PontoDeInteresseServiceRedisTest {
         assertThat(result.getCoordY()).isNotNull();
 
         verifyNoMoreInteractions(redisRepository);
+        verify(rabbitTemplate).convertAndSend(anyString(), anyString(), eq(result));
     }
 
     @Test
