@@ -46,6 +46,7 @@ public class PontoDeInteresseRedisServiceTest {
     @Test
     public void testPersistValidPOI() {
         PontoDeInteresseRedis redis = new PontoDeInteresseRedis();
+        redis.setLocalPoi("POI Test Average");
         redis.setCoordX(10.0);
         redis.setCoordY(15.0);
 
