@@ -32,11 +32,11 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Up Container Redis
-        run: docker run -d --name redis-cache -p 6379:6379 -e REDIS_PASSWORD=my-password -e REDIS_PORT=6379 -e REDIS_DATABASES=16 redis:latest
-
-      - name: Package Application App
-        run: mvn -B package --file pom.xml -P prod
+      - name: Up Container Redis & Package Application App
+        run: |
+          docker run -d --name redis-cache -p 6379:6379 -e REDIS_PASSWORD=my-password -e REDIS_PORT=6379 -e REDIS_DATABASES=16 redis:latest
+          mvn -B package --file pom.xml -P prod
+        
 
   test:
     needs: [ package ]
