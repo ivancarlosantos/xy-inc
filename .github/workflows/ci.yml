@@ -9,54 +9,68 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.1.7
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4.2.1
         with:
           java-version: 17
           distribution: 'temurin'
           cache: 'maven'
 
       - name: Build with Maven
-        run: mvn clean install -DskipTests
+        run: mvn clean install -DskipTests -P prod
 
   package:
     needs: [ build ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.1.7
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4.2.1
         with:
           java-version: 17
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Up Container Redis
+        run: docker run -d --name redis-cache -p 6379:6379 -e REDIS_PASSWORD=my-password -e REDIS_PORT=6379 -e REDIS_DATABASES=16 redis:latest
+
       - name: Package Application App
-        run: mvn -B package --file pom.xml
+        run: mvn -B package --file pom.xml -P prod
 
   test:
     needs: [ package ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.1.7
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4.2.1
         with:
           java-version: 17
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Setup redis
+        uses: supercharge/redis-github-action@1.2.0
+        with:
+          redis-version: 6
+
+      - name: Install redis cli
+        run: sudo apt-get install -y redis-tools
+
+      - name: Verify that redis is up
+        run: redis-cli ping
+
       - name: Test Application App
-        run: mvn test
+        run: mvn test -P prod
 
   deploy:
     needs: [ test ]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4.1.7
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4.2.1
         with:
           java-version: 17
           distribution: 'temurin'
@@ -68,5 +82,5 @@ jobs:
       - name: Build Docker Image
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/poi-app .
 
-      - name: Publish Docker image
+      - name: Publish Docker Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/poi-app

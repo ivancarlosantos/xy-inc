@@ -1,6 +1,7 @@
 package ics.luizalabs.desafio.xy_inc.service;
 
 import ics.luizalabs.desafio.xy_inc.dto.PontoDeInteresseDTO;
+import ics.luizalabs.desafio.xy_inc.dto.RequestTest;
 import ics.luizalabs.desafio.xy_inc.exceptions.RegraDeNegocioException;
 import ics.luizalabs.desafio.xy_inc.exceptions.LocalNaoEncontradoException;
 import ics.luizalabs.desafio.xy_inc.model.PontoDeInteresseModel;
@@ -8,6 +9,9 @@ import ics.luizalabs.desafio.xy_inc.repository.PontoDeInteresseRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,17 +30,13 @@ public class PontoDeInteresseService {
                 .coordY(dto.coordY())
                 .build();
 
-        if (dto.localPoi().isEmpty()){
-            throw new RegraDeNegocioException("O CAMPO LOCAL NÃO PODE ESTAR VAZIO E/OU NULO");
-        }
-
         if (dto.coordX() < 0 || dto.coordY() < 0) {
             throw new RegraDeNegocioException("COORDENADAS NÃO PODEM SER VALORES NEGATIVOS");
         }
 
         repository.save(poi);
 
-        return new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY());
+        return new PontoDeInteresseDTO(poi.getId(), poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY());
     }
 
     public PontoDeInteresseDTO updatePOI(Long id, PontoDeInteresseDTO dto) {
@@ -46,38 +46,30 @@ public class PontoDeInteresseService {
         model.setCoordX(dto.coordX());
         model.setCoordY(dto.coordY());
 
-        if (dto.localPoi().isEmpty()){
-            throw new RegraDeNegocioException("O CAMPO LOCAL NÃO PODE ESTAR VAZIO E/OU NULO");
-        }
-
         if (dto.coordX() < 0 || dto.coordY() < 0) {
             throw new RegraDeNegocioException("COORDENADAS NÃO PODEM SER VALORES NEGATIVOS");
         }
 
         PontoDeInteresseModel resp = repository.save(model);
 
-        return new PontoDeInteresseDTO(resp.getLocalPoi(), resp.getCoordX(), resp.getCoordY());
+        return new PontoDeInteresseDTO(resp.getId(), resp.getLocalPoi(), resp.getCoordX(), resp.getCoordY());
     }
 
     public List<PontoDeInteresseDTO> list() {
         return repository
                 .findAll()
                 .stream()
-                .map(poi -> new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
+                .map(poi -> new PontoDeInteresseDTO(poi.getId(), poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
                 .toList();
     }
 
-    public PontoDeInteresseDTO findLocalPOI(String local) {
+    public List<PontoDeInteresseDTO> findLocalPOI(String local) {
 
-        Optional<PontoDeInteresseDTO> pdi = Optional
-                .ofNullable(repository
-                        .findByLocalPOI(local)
-                        .map(poi -> new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
-                        .orElseThrow(() -> new LocalNaoEncontradoException("LOCAL NÃO ENCONTRADO")))
+        return repository
+                .findByLocalPOI(local)
                 .stream()
-                .findFirst();
-
-        return pdi.get();
+                .map(poi -> new PontoDeInteresseDTO(poi.getId(), poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
+                .toList();
     }
 
     public List<PontoDeInteresseDTO> searchPOI(Double x, Double y, Double max) {
@@ -90,8 +82,18 @@ public class PontoDeInteresseService {
         return repository.findLocalRef(xMin, xMax, yMin, yMax)
                 .stream()
                 .filter(p -> searchByCoordinate(x, y, p.getCoordX(), p.getCoordY()) <= max)
-                .map(poi -> new PontoDeInteresseDTO(poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
+                .map(poi -> new PontoDeInteresseDTO(poi.getId(), poi.getLocalPoi(), poi.getCoordX(), poi.getCoordY()))
                 .toList();
+    }
+
+    public RequestTest test() throws UnknownHostException {
+
+        return RequestTest
+                .builder()
+                .ownerHost(InetAddress.getLocalHost().getHostName())
+                .address(InetAddress.getLocalHost().getHostAddress())
+                .date(new Date().toString())
+                .build();
     }
 
     private Double searchByCoordinate(Double coordX,
@@ -103,11 +105,13 @@ public class PontoDeInteresseService {
     }
 
     private PontoDeInteresseModel findID(Long id) {
-        Optional<PontoDeInteresseModel> findID = repository.findById(id);
+        Optional<PontoDeInteresseModel> findID = Optional
+                .ofNullable(repository
+                        .findById(id)
+                        .orElseThrow(() -> new LocalNaoEncontradoException("LOCAL NÃO ENCONTRADO")));
+
         PontoDeInteresseModel model = null;
-        if (!findID.isPresent()) {
-            throw new LocalNaoEncontradoException("LOCAL NÃO ENCONTRADO");
-        }
+
         model = findID.get();
 
         return model;
@@ -117,4 +121,7 @@ public class PontoDeInteresseService {
         return Math.sqrt(Math.pow(refX - coordX, 2) + Math.pow(refY - coordY, 2));
     }
 
+    public void saveAll(List<PontoDeInteresseModel> modelList) {
+        repository.saveAll(modelList);
+    }
 }

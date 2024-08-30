@@ -2,49 +2,45 @@ package ics.luizalabs.desafio.xy_inc.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class PontoDeInteresseExceptionHandler {
 
-    @ExceptionHandler(value = {LocalNaoEncontradoException.class})
-    public ResponseEntity<ExceptionMessage> handlerNotFoundException(RuntimeException ex) {
+    @ExceptionHandler(RegraDeNegocioException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrors handleRegraDeNegocioException(RegraDeNegocioException ex) {
 
-        ExceptionMessage message = new ExceptionMessage(
-                HttpStatus.NOT_FOUND.value(),
-                HttpStatus.NOT_FOUND,
-                new Date(),
-                ex.getMessage());
-
-        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+        String errors = ex.getMessage();
+        return new ApiErrors(errors);
     }
 
-    @ExceptionHandler(value = {RegraDeNegocioException.class})
-    public ResponseEntity<ExceptionMessage> handlerNegativeException(RuntimeException ex) {
+    @ExceptionHandler(LocalNaoEncontradoException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiErrors handleLocalNaoEncontradoException(LocalNaoEncontradoException ex) {
 
-        ExceptionMessage message = new ExceptionMessage(
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST,
-                new Date(),
-                ex.getMessage());
-
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+        String errors = ex.getMessage();
+        return new ApiErrors(errors);
     }
 
-    @ExceptionHandler(value = {MethodArgumentTypeMismatchException.class})
-    public ResponseEntity<ExceptionMessage> handlerFormatNumberException(MethodArgumentTypeMismatchException ex) {
-
-        ExceptionMessage message = new ExceptionMessage(
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST,
-                new Date(),
-                ex.getMessage());
-
-        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<?> handleArgumentNotValid(MethodArgumentNotValidException ex) {
+        List<ObjectError> errors = ex.getBindingResult().getAllErrors();
+        Map<String, String> error = new LinkedHashMap<>();
+        errors.forEach(er -> {
+            String message = er.getDefaultMessage();
+            String field = ((FieldError) (er)).getField();
+            error.put(field, message);
+        });
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
-    
 }
